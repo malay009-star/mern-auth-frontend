@@ -5,15 +5,15 @@ import { setAccessToken } from "../lib/axios";
 import { useRouter } from "next/navigation";
 
 type AuthContextType = {
-    user: unknown;
-    setUser: (user: unknown) => void;
+    user: unknown | null;
+    setUser: React.Dispatch<React.SetStateAction<unknown | null>>;
     logout: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<unknown | null>(null);
     const router = useRouter();
     const logout = async () => {
         await logoutUser();
