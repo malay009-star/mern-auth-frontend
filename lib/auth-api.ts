@@ -8,4 +8,6 @@ export const registerUser = (data: { email: string; password: string }) =>
 
 export const logoutUser = () => API.post("/auth/logout");
 
-export const getProfile = () => API.get("/auth/profile");
+export const getProfile = () => API.get("/users/profile");
+
+export const getDashboard = () => API.get("/users/dashboard");

@@ -1,10 +1,21 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
+import { getDashboard } from "@/lib/auth-api";
+import { useEffect } from "react";
 
 export default function Dashboard() {
     const auth = useAuth();
     const { user, logout } = auth as { user: { username?: string }; logout: () => Promise<void> };
+
+    const getDashboardData = async () => {
+        const { data } = await getDashboard();
+        console.log(data);
+    }
+
+    useEffect(() => {
+        getDashboardData();
+    }, []);
 
     const userName = user?.username;
     return (

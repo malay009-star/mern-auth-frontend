@@ -1,9 +1,12 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth-api";
 import { setAccessToken } from "@/lib/axios";
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { IUserProfile } from "@/types/user.types";
 
 type LoginForm = {
     email: string;
@@ -11,9 +14,21 @@ type LoginForm = {
 };
 
 const Login = () => {
-    const auth = useAuth();
-    const setUser = auth?.setUser;
     const router = useRouter();
+    const auth = useAuth();
+    const { user, loading } = auth as { user: IUserProfile; loading: boolean };
+
+    useEffect(() => {
+        if (loading) return;
+
+        // Already logged in → redirect based on role
+        if (user?.role === "admin") {
+            router.push("/dashboard");
+        } else if (user?.role === "user") {
+            router.push("/profile");
+        }
+    }, [user, loading, router]);
+
     const {
         register,
         handleSubmit,
@@ -24,12 +39,18 @@ const Login = () => {
         try {
             const { data } = await loginUser(formData);
             setAccessToken(data.accessToken);
-            setUser?.(data.user);
-            router.push("/dashboard");
+            // Redirect after successful login
+            if (data.user.role === "admin") {
+                router.push("/dashboard");
+            } else {
+                router.push("/profile");
+            }
         } catch (err: unknown) {
             console.log(err);
         }
     };
+
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
@@ -94,6 +115,7 @@ const Login = () => {
                     >
                         Sign in
                     </button>
+
                 </form>
                 <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
                     Don&apos;t have an account?{" "}
