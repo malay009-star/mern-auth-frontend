@@ -2,11 +2,12 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { getDashboard } from "@/lib/auth-api";
+import { IUserProfile } from "@/types/user.types";
 import { useEffect } from "react";
 
 export default function Dashboard() {
     const auth = useAuth();
-    const { user, logout } = auth as { user: { username?: string }; logout: () => Promise<void> };
+    const { user, logout } = auth as { user: IUserProfile; logout: () => Promise<void> };
 
     const getDashboardData = async () => {
         const { data } = await getDashboard();
@@ -17,6 +18,7 @@ export default function Dashboard() {
         getDashboardData();
     }, []);
 
+    console.log(user);
     const userName = user?.username;
     return (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-900">

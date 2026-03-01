@@ -10,7 +10,7 @@ export default function Profile() {
   const auth = useAuth();
   const { logout } = auth as { logout: () => Promise<void> };
   const router = useRouter();
-  const [user, setUser] = useState<IUserProfile | null>(null);
+  const { profile, setProfile } = auth as { profile: IUserProfile; setProfile: (profile: IUserProfile) => void };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +20,7 @@ export default function Profile() {
         const { data } = await getProfile();
         const res = data as ProfileApiResponse;
         if (res.success && res.user) {
-          setUser(res.user);
+          setProfile(res.user);
         } else {
           setError(res.message || "Failed to load profile");
         }
@@ -41,7 +41,7 @@ export default function Profile() {
     );
   }
 
-  if (error || !user) {
+  if (error || !profile) {
     return (
       <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
@@ -90,7 +90,7 @@ export default function Profile() {
                 Username
               </dt>
               <dd className="mt-1 text-slate-800 dark:text-slate-100">
-                {user.username}
+                {profile.username}
               </dd>
             </div>
             <div>
@@ -98,7 +98,7 @@ export default function Profile() {
                 Email
               </dt>
               <dd className="mt-1 text-slate-800 dark:text-slate-100">
-                {user.email}
+                {profile.email}
               </dd>
             </div>
             <div>
@@ -106,26 +106,26 @@ export default function Profile() {
                 Role
               </dt>
               <dd className="mt-1 text-slate-800 dark:text-slate-100 capitalize">
-                {user.role}
+                {profile.role}
               </dd>
             </div>
-            {user.phone && (
+            {profile.phone && (
               <div>
                 <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                   Phone
                 </dt>
                 <dd className="mt-1 text-slate-800 dark:text-slate-100">
-                  {user.phone}
+                  {profile.phone}
                 </dd>
               </div>
             )}
-            {user.bio && (
+            {profile.bio && (
               <div>
                 <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                   Bio
                 </dt>
                 <dd className="mt-1 text-slate-800 dark:text-slate-100">
-                  {user.bio}
+                  {profile.bio}
                 </dd>
               </div>
             )}
@@ -136,12 +136,12 @@ export default function Profile() {
               <dd className="mt-1">
                 <span
                   className={
-                    user.isVerified
+                    profile.isVerified
                       ? "text-emerald-600 dark:text-emerald-400"
                       : "text-amber-600 dark:text-amber-400"
                   }
                 >
-                  {user.isVerified ? "Yes" : "No"}
+                  {profile.isVerified ? "Yes" : "No"}
                 </span>
               </dd>
             </div>
@@ -150,7 +150,7 @@ export default function Profile() {
                 Member since
               </dt>
               <dd className="mt-1 text-slate-800 dark:text-slate-100 text-sm">
-                {formatDate(user.createdAt)}
+                {formatDate(profile.createdAt)}
               </dd>
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function Profile() {
                 Last updated
               </dt>
               <dd className="mt-1 text-slate-800 dark:text-slate-100 text-sm">
-                {formatDate(user.updatedAt)}
+                {formatDate(profile.updatedAt)}
               </dd>
             </div>
           </dl>

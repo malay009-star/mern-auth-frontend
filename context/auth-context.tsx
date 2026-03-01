@@ -3,18 +3,13 @@ import { createContext, useEffect, useState } from "react";
 import { getProfile, logoutUser } from "../lib/auth-api";
 import { setAccessToken } from "../lib/axios";
 import { useRouter } from "next/navigation";
+import { IUserProfile } from "@/types/user.types";
 
-type AuthContextType = {
-    user: unknown | null;
-    setUser: React.Dispatch<React.SetStateAction<unknown | null>>;
-    logout: () => Promise<void>;
-    loading: boolean;
-};
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<unknown | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<unknown | null>(null);
+    const [user, setUser] = useState<IUserProfile | null>(null);
+    const [profile, setProfile] = useState<IUserProfile | null>(null);
     const router = useRouter();
     const [loading, setLoading] = useState(true);
 
@@ -23,12 +18,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 const { data } = await getProfile();
                 if (data.success) {
-                    setUser(data.user);
+                    setProfile(data.user);
                 } else {
-                    setUser(null);
+                    setProfile(null);
                 }
             } catch {
-                setUser(null);
+                setProfile(null);
             } finally {
                 setLoading(false);
             }
@@ -41,11 +36,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await logoutUser();
         router.push("/");
         setUser(null);
+        setProfile(null);
         setAccessToken(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, logout, loading }}>
+        <AuthContext.Provider value={{ profile, setProfile, user, setUser, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

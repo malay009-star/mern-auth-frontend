@@ -16,7 +16,7 @@ type LoginForm = {
 const Login = () => {
     const router = useRouter();
     const auth = useAuth();
-    const { user, loading } = auth as { user: IUserProfile; loading: boolean };
+    const { user, loading, setUser } = auth as { user: IUserProfile; loading: boolean; setUser: (user: IUserProfile) => void };
 
     useEffect(() => {
         if (loading) return;
@@ -38,6 +38,8 @@ const Login = () => {
     const onSubmit = async (formData: LoginForm) => {
         try {
             const { data } = await loginUser(formData);
+            console.log(data);
+            setUser(data.user);
             setAccessToken(data.accessToken);
             // Redirect after successful login
             if (data.user.role === "admin") {
